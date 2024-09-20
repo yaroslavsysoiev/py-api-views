@@ -46,11 +46,7 @@ class GenreDetail(APIView):
         return Response(serializer.data)
 
     def patch(self, request, pk):
-        try:
-            genre = Genre.objects.get(pk=pk)
-        except Genre.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
+        genre = Genre.objects.get(pk=pk)
         serializer = GenreSerializer(genre, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -62,7 +58,7 @@ class GenreDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ActorList(GenericAPIView, CreateModelMixin, ListModelMixin):
+class ActorList(CreateModelMixin, ListModelMixin, GenericAPIView):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
 
@@ -74,10 +70,10 @@ class ActorList(GenericAPIView, CreateModelMixin, ListModelMixin):
 
 
 class ActorDetail(
-    GenericAPIView,
     RetrieveModelMixin,
     UpdateModelMixin,
-    DestroyModelMixin
+    DestroyModelMixin,
+    GenericAPIView,
 ):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
@@ -96,12 +92,12 @@ class ActorDetail(
 
 
 class CinemaHallViewSet(
-    viewsets.GenericViewSet,
     ListModelMixin,
     CreateModelMixin,
     RetrieveModelMixin,
     UpdateModelMixin,
-    DestroyModelMixin
+    DestroyModelMixin,
+    viewsets.GenericViewSet,
 ):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
